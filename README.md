@@ -120,11 +120,11 @@ npm run dev
 ```bash
 # Deploy to Kubernetes
 kubectl apply -f k8s/
-
-# Or use Terraform
-cd terraform/
-terraform init
-terraform apply
+123: 
+124: # Or use Terraform
+125: cd terraform/
+126: terraform init
+127: terraform apply
 ```
 
 ## 📊 Performance & Scale
@@ -182,101 +182,59 @@ terraform apply
 - [🔒 Security Guide](./docs/security.md)
 - [💻 SDK Documentation](./docs/sdk.md)
 
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
-### Development Workflow
-
-1. **Fork the repository**
-2. **Create a feature branch**
-```bash
-git checkout -b feature/amazing-feature
-```
-
-3. **Make your changes**
-4. **Add tests**
-```bash
-npm run test
-npm run test:coverage
-```
-
-5. **Submit a pull request**
-
-### Code Style
-
-- Use TypeScript for all new code
-- Follow ESLint configuration
-- Add unit tests for new features
-- Update documentation
-
-### Areas for Contribution
-
-- 🐛 **Bug Fixes**: Help us squash bugs
-- ✨ **New Features**: Propose and implement new features
-- 📚 **Documentation**: Improve our documentation
-- 🧪 **Testing**: Add more test coverage
-- 🌍 **Localization**: Help translate the interface
-
-## 🏆 Team
-
-| Role | Name | GitHub |
-|------|------|--------|
-| **Lead Architect** | [Your Name] | [@yourname](https://github.com/yourname) |
-| **Backend Developer** | [Team Member] | [@member](https://github.com/member) |
-| **Frontend Developer** | [Team Member] | [@member](https://github.com/member) |
-| **DevOps Engineer** | [Team Member] | [@member](https://github.com/member) |
-
-## 📈 Roadmap
-
-### Phase 1: MVP (Q1 2026)
-- [x] Core authentication system
-- [x] Basic resource monitoring
-- [x] Web dashboard
-- [ ] Mobile applications
-
-### Phase 2: Beta (Q2 2026)
-- [ ] Advanced security features
-- [ ] Token economy
-- [ ] Multi-device support
-- [ ] Performance optimization
-
-### Phase 3: Production (Q3 2026)
-- [ ] Global deployment
-- [ ] Enterprise features
-- [ ] API marketplace
-- [ ] Advanced analytics
-
-### Phase 4: Scale (Q4 2026)
-- [ ] Machine learning optimization
-- [ ] Global CDN
-- [ ] Enterprise partnerships
-- [ ] 10M+ users
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **IPFS Team** For the amazing distributed file system
-- **Kubernetes Community** For the powerful orchestration platform
-- **Open Source Community** For all the amazing tools and libraries
-- **Our Contributors** For making this project possible
-
-## 📞 Contact
-
-- **Website**: [https://timber.cloud](https://timber.cloud)
-- **Email**: [contact@timber.cloud](mailto:contact@timber.cloud)
-- **Twitter**: [@TimberCloud](https://twitter.com/TimberCloud)
-- **Discord**: [Join our community](https://discord.gg/timber)
-
 ---
+
+# 🏢 Timber: Enterprise Edition (v2.0)
 
 <div align="center">
 
-**⭐ Star this repository if it inspired you!**
+**The "Unbreakable" Cloud Platform: Hyper-scalable, Self-healing, and Zero-Trust.**
 
-Made with ❤️ by the Timber Team
+[![Architecture: v2.0](https://img.shields.io/badge/Architecture-Enterprise%20v2.0-purple.svg)](./Timber_Enterprise_Architecture.md)
+
+[Enterprise Architecture](./Timber_Enterprise_Architecture.md) • [Enterprise Deployment](#enterprise-deployment)
 
 </div>
+
+## 🌟 Enterprise Overview
+
+Timber Enterprise is engineered for extreme resilience and infinite scalability. Unlike traditional cloud providers, Timber leverages a **Hybrid Decentralized Architecture** combined with rigorous Reliability Engineering.
+
+> **Philosophy**: "Everything Fails All the Time". Timber Enterprise is engineered to survive region-wide outages, network partitions, and malicious attacks without data loss.
+
+### 🚀 Enterprise Features
+- **🛡️ Zero Trust Security**: End-to-end mTLS, Hardware Attestation (TPM 2.0), and short-lived credentials.
+- **⚡ Antifragile Infrastructure**: Chaos Engineering is native; the system self-heals from random node failures.
+- **🌍 Infinite Scale**: CQRS + Event Sourcing pattern allows the control plane to handle billions of events.
+- **💾 Erasure Coding**: Reed-Solomon (10+4) ensures data durability even if 40% of storage nodes fail simultaneously.
+
+## 🏗️ Architecture v2.0
+
+For a deep dive into our "Unbreakable" standad, read the **[Enterprise Architecture Specification](./Timber_Enterprise_Architecture.md)**.
+
+```mermaid
+graph TD
+    Client -->|QUIC/HTTP3| Gateway[Global API Gateway]
+    Gateway -->|Command| ControlPlane[Control Plane (Node.js + Kafka)]
+    Gateway -->|Stream| DataPlane[Data Plane (Go + Wasm)]
+    
+    DataPlane -->|Shards| EdgeNodes[Edge Storage Nodes]
+    ControlPlane -->|Events| StateStore[CockroachDB + Redis]
+```
+
+## �️ Technology Stack (The "Hard" Way)
+
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **Control Plane** | **Node.js + Kafka** | High-throughput event processing |
+| **Data Plane** | **Go (Golang)** | Raw block storage & networking |
+| **State** | **CockroachDB** | Geo-distributed strong consistency |
+| **Orchestration** | **Kubernetes + Istio** | Zero-trust service mesh |
+| **Observability** | **OpenTelemetry** | Distributed tracing |
+| **Chaos** | **Chaos Mesh** | Continuous failure injection |
+
+## � Documentation
+- **[📖 Enterprise Architecture v2.0](./Timber_Enterprise_Architecture.md)** - *Read this first!*
+- [🔧 API Reference (Protobufs)](./proto/README.md)
+- [🔒 Security Pattern: Bifurcation](./docs/security.md)
+- [🌪️ Chaos Engineering Guide](./docs/chaos.md)
