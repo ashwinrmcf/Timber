@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="./assets/logo.png" alt="Timber Logo">
+<img src="./assets/logo.png" height=1024 width=1024 alt="Timber Logo">
 
 **Revolutionary distributed cloud storage powered by edge computing**
 
