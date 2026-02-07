@@ -15,6 +15,34 @@
 
 </div>
 
+## 🚧 Current Development Status (Updated: Feb 8, 2026)
+
+**Phase 2: The Storage Engine (In Progress)**
+
+| Component | Status | Progress | Notes |
+| :--- | :--- | :--- | :--- |
+| **Monorepo** | ✅ Complete | 100% | `v2.0` Structure (Frontend/Backend) active. |
+| **Frontend** | ⚠️ Partial | 30% | Skeleton Ready (`apps/web`). Basic Dashboard UI implemented. needs API integration. |
+| **Gateway** | ⚠️ Partial | 40% | Skeleton Ready (`backend/gateway`). `/api/upload/init` logic added. needs Auth middleware. |
+| **Core Engine** | 🔨 Building | 10% | **Current Task**: Implementing Reed-Solomon Erasure Coding in Go. |
+
+### 📋 detailed Todo List
+- [x] **Phase 0: Foundation**
+    - [x] Initialize Turborepo & Workspaces
+    - [x] Set up React + Vite (`frontend/web`)
+    - [x] Set up Node.js + Express (`backend/gateway`)
+    - [x] Set up Go Module (`backend/core`)
+- [ ] **Phase 1: Basic Logic**
+    - [x] Dashboard UI (Dark Mode)
+    - [x] Gateway Token Generation
+    - [ ] `cors` configuration (In Progress)
+- [ ] **Phase 2: The Engine (Go)**
+    - [ ] **Step 1**: Implement Reed-Solomon Encoder
+    - [ ] **Step 2**: Implement QUIC Transport
+    - [ ] **Step 3**: Integrate IPFS Pinning
+
+---
+
 ## 🌟 Overview
 
 Timber is a groundbreaking distributed cloud storage platform that transforms consumer devices into a powerful, decentralized cloud infrastructure. By leveraging unused storage and processing power from laptops, mobiles, and desktops, Timber creates a scalable, secure, and cost-effective alternative to traditional cloud providers.

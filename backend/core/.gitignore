@@ -1,0 +1,4 @@
+core.exe
+core
+vendor/
+.env
