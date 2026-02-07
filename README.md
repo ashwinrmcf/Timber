@@ -1,7 +1,7 @@
 # Timber: Enterprise Distributed Cloud Platform
 <div align="center">
 
-<img src="./assets/logo.png" height=300 width=300 alt="Timber Logo">
+<img src="./frontend/assets/logo.png" height=300 width=300 alt="Timber Logo">
 
 **The "Unbreakable" Cloud Standard: Hyper-scalable, Self-healing, and Zero-Trust.**
 
