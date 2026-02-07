@@ -43,8 +43,19 @@ app.post('/api/upload/init', async (req, res) => {
 
     res.json({
         fileId: id,
-        // The client will use this token to talk to storage nodes directly via gRPC/QUIC
-        uploadToken: `token_${id}_${Date.now()}`,
+        // The "Bifurcation" Protocol:
+        // 1. Data Shards (90%) -> Go to Edge Nodes via QUIC
+        // 2. Parity Shards (10%) -> Go to Core via HTTPS (Reliable fallback)
+        targets: {
+            dateShards: [
+                `quic://node-alpha.timber.network:4433/upload/${id}`,
+                `quic://node-beta.timber.network:4433/upload/${id}`,
+                `quic://node-gamma.timber.network:4433/upload/${id}`
+            ],
+            parityShards: [
+                `https://core.timber.network/upload/${id}/parity`
+            ]
+        },
         shardingConfig: {
             dataShards: 10,
             parityShards: 4

@@ -37,8 +37,8 @@
 - [ ] **Phase 2: The Engine (Go)**
     - [x] **Step 1**: Implement Reed-Solomon Encoder
     - [x] **Step 2**: Implement File Chunking I/O
-    - [ ] **Step 3**: Implement QUIC Transport
-    - [ ] **Step 4**: Implement "Bifurcation" Protocol
+    - [x] **Step 3**: Implement QUIC Transport
+    - [x] **Step 4**: Implement "Bifurcation" Protocol
 
 ---
 

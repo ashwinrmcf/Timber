@@ -1,6 +1,7 @@
 {
   "name": "timber-monorepo",
   "version": "1.0.0",
+  "packageManager": "npm@10.2.3",
   "private": true,
   "workspaces": [
     "frontend/*",
