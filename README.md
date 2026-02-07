@@ -97,7 +97,7 @@ How we prevent data loss without standard backups.
 
 ```mermaid
 graph LR
-    Input[📄 Input File (100MB)] --> Split{Sliding Window}
+    Input["📄 Input File (100MB)"] --> Split{Sliding Window}
     Split --> D1[Data 1]
     Split --> D2[Data 2]
     Split --> D3[Data 3]
