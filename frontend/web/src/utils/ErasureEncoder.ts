@@ -34,6 +34,25 @@ export class ErasureEncoder {
         return shards;
     }
 
+    public combine(shards: Uint8Array[], originalSize: number): Uint8Array {
+        const result = new Uint8Array(originalSize);
+        let offset = 0;
+        const shardSize = shards[0].length;
+
+        for (let i = 0; i < this.dataShards; i++) {
+            const shard = shards[i];
+
+            // Calculate how much to copy (handle last shard truncation)
+            const remaining = originalSize - offset;
+            const toCopy = Math.min(remaining, shardSize);
+
+            result.set(shard.slice(0, toCopy), offset);
+            offset += toCopy;
+        }
+
+        return result;
+    }
+
     private computeParity(dataShards: Uint8Array[], parityIndex: number): Uint8Array {
         const size = dataShards[0].length;
         const parity = new Uint8Array(size);

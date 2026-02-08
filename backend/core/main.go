@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"io"
 	"time"
+	"strings"
+	"encoding/json"
 
 	"github.com/timber/core/transport"
 	"github.com/timber/core/storage"
@@ -35,7 +37,7 @@ func main() {
 		// CORS
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Upload-Token, X-Shard-Index, X-File-Id")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Upload-Token, X-Shard-Index, X-File-Id, X-File-Name, X-File-Total-Size")
 		
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
@@ -69,14 +71,59 @@ func main() {
 			return
 		}
 
+
+		// Metadata Headers
+		fileName := r.Header.Get("X-File-Name")
+		fileSizeStr := r.Header.Get("X-File-Total-Size")
+		var fileSize int64
+		fmt.Sscanf(fileSizeStr, "%d", &fileSize)
+
 		// Update Metadata
-		// In a real system, we would lock and update the list of shards for this FileID
-		// For this MVP, we just log it, but we should add it to the store
-		// metaStore.AddShard(fileID, filename) -- (We need to implement AddShard in store.go first)
+		metaStore.AddShard(fileID, filename, fileName, fileSize)
 		
 		log.Printf("✅ PERSISTED: %s (%d bytes)", filename, len(data))
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Upload Received & Saved"))
+	})
+
+	// Serve Raw Shard Data (for download)
+	// e.g. http://localhost:8081/data/shard_abc_0.bin
+	fs := http.FileServer(http.Dir("./data"))
+	// Wrap in CORS handler
+	http.Handle("/data/", http.StripPrefix("/data/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		fs.ServeHTTP(w, r)
+	})))
+
+	// Get File Metadata (List all or get specific)
+	// e.g. http://localhost:8081/files/ (List All)
+	// e.g. http://localhost:8081/files/abc-123 (Get One)
+	http.HandleFunc("/files/", func(w http.ResponseWriter, r *http.Request) {
+		// CORS
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Type", "application/json")
+		
+		if r.Method == "OPTIONS" {
+			return
+		}
+
+		fileID := strings.TrimPrefix(r.URL.Path, "/files/")
+		
+		// If no ID provided, list all files
+		if fileID == "" {
+			files := metaStore.GetAllFiles()
+			json.NewEncoder(w).Encode(files)
+			return
+		}
+
+		// Otherwise get specific file
+		meta, exists := metaStore.GetFile(fileID)
+		if !exists {
+			http.Error(w, "File Not Found", http.StatusNotFound)
+			return
+		}
+
+		json.NewEncoder(w).Encode(meta)
 	})
 
 	// Start QUIC Transport in a goroutine
