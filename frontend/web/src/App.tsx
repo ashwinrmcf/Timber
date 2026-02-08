@@ -1,78 +1,178 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import './App.css'
+import { ErasureEncoder } from './utils/ErasureEncoder'
 
 function App() {
-  const [connected, setConnected] = useState(false)
-  const [uploadStatus, setUploadStatus] = useState<string>('')
+  const [file, setFile] = useState<File | null>(null)
+  const [status, setStatus] = useState<string>('Network Status: Healthy') // Default to Healthy for demo
   const [token, setToken] = useState<string>('')
+  const [uploadStatus, setUploadStatus] = useState<string>('')
+  const [certHash, setCertHash] = useState<string>('') // Keep for legacy/debug
+
+  // Remove useEffect for token to avoid "stale" or "failed on load" issues.
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0])
+      setUploadStatus('Ready to Upload')
+    }
+  }
 
   const handleUpload = async () => {
-    setUploadStatus('Requesting Upload Token...')
+    if (!file) {
+      alert("Please select a file.")
+      return
+    }
+
     try {
-      const res = await fetch('http://localhost:8080/api/upload/init', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'demo_file.mp4', size: 1024 * 1024 * 50 }) // Fake 50MB file
+      // 1. Get Token (Lazy Load)
+      let validToken = token;
+
+      if (!validToken) {
+        setUploadStatus('🔐 Requesting Secure Token from Gateway...')
+        const res = await fetch('http://localhost:8080/api/upload/init', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: file.name, size: file.size })
+        })
+
+        if (!res.ok) throw new Error("Gateway Unreachable");
+
+        const data = await res.json()
+        validToken = data.uploadToken; // Update local variable
+        setToken(validToken); // Update state for next time
+        console.log("Token acquired:", validToken)
+      }
+
+      setUploadStatus('⏳ Sharding File (10 Data + 4 Parity)...')
+
+      // 1. Read File
+      const buffer = await file.arrayBuffer()
+      const data = new Uint8Array(buffer)
+
+      // 2. Erasure Encode
+      const startTime = performance.now()
+      const encoder = new ErasureEncoder(10, 4)
+      const shards = encoder.encode(data)
+      const endTime = performance.now()
+
+      console.log(`Sharding took ${Math.round(endTime - startTime)}ms`)
+      setUploadStatus(`🧩 File split into ${shards.length} Shards. Uploading...`)
+
+      // 3. Upload Shards in Parallel
+      // 3. Upload Shards in Parallel
+      const fileId = crypto.randomUUID(); // Generate unique File ID
+      console.log(`🆔 Generated File ID: ${fileId}`);
+
+      const uploadPromises = shards.map(async (shard, index) => {
+        // In a real distributed system, we would rotate through different nodes here.
+        // For local dev, we hit the same node on port 8081.
+        const storageUrl = `http://127.0.0.1:8081/upload?shard=${index}`
+
+        await fetch(storageUrl, {
+          method: 'POST',
+          body: new Blob([shard as any]), // Cast to any to silence strict TS mismatch
+          headers: {
+            'X-Shard-Index': index.toString(),
+            'X-Upload-Token': validToken, // Use local variable
+            'X-File-Id': fileId,
+            'Content-Type': 'application/octet-stream'
+          }
+        })
+        console.log(`✅ Shard ${index} uploaded`)
       })
-      const data = await res.json()
-      setToken(data.uploadToken)
-      setUploadStatus(`Token Received! Target: ${data.targets.dateShards[0]}`)
-      console.log('Gateway Response:', data)
+
+      await Promise.all(uploadPromises)
+
+      setUploadStatus('✅ FATALITY! All 14 Shards Distributed & Stored.')
+      console.log('Distributed Upload Complete')
+
     } catch (err) {
-      setUploadStatus('Error: Gateway offline?')
       console.error(err)
+      setUploadStatus(`Error: ${err}`)
     }
   }
 
   return (
     <div className="container">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
-        <div>
-          <h1>Timber Cloud</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Distributed Enterprise Storage</p>
-        </div>
-        <button className="btn" onClick={() => setConnected(!connected)}>
-          {connected ? 'Connected: 0x12...34' : 'Connect Wallet'}
-        </button>
+      <header className="header">
+        <div className="logo">Timber Cloud</div>
+        <button className="connect-wallet">Connect Wallet</button>
       </header>
 
-      <div className="grid">
+      <div className="status-bar">
+        <span>Distributed Enterprise Storage</span>
+      </div>
+
+      <div className="dashboard-grid">
         <div className="card">
-          <div className="stat-label">Total Storage Used</div>
-          <div className="stat-value">0.00 GB</div>
+          <h3>Total Storage Used</h3>
+          <h1>0.00 GB</h1>
         </div>
         <div className="card">
-          <div className="stat-label">Active Nodes</div>
-          <div className="stat-value">14</div>
+          <h3>Active Nodes</h3>
+          <h1>14</h1>
         </div>
         <div className="card">
-          <div className="stat-label">Network Status</div>
-          <div className="stat-value" style={{ color: '#4ade80' }}>Healthy</div>
+          <h3>Network Status</h3>
+          <h1 style={{ color: status.includes('Offline') ? 'red' : '#4ade80' }}>
+            {status.replace('Network Status: ', '')}
+          </h1>
         </div>
       </div>
 
-      <div className="card" style={{ marginTop: '2rem', height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '1.25rem', fontWeight: 600 }}>Drop files here to upload</p>
-          <p style={{ color: 'var(--text-secondary)' }}>Encrypted & Sharded across the network</p>
+      <div className="upload-zone">
+        <h2>Drop files here to upload</h2>
+        <p>Encrypted & Sharded across the network</p>
 
-          <button
-            className="btn"
-            style={{ marginTop: '1rem', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', border: '1px solid var(--border)' }}
-            onClick={handleUpload}
-          >
+        {/* Hidden Hash Input for Debugging if needed */}
+        {/* <input 
+            type="text" 
+            placeholder="Server Cert Hash (Debug)" 
+            value={certHash}
+            onChange={(e) => setCertHash(e.target.value)}
+            className="hash-input"
+        /> */}
+
+        <input
+          type="file"
+          id="fileInput"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
+
+        {!file ? (
+          <label htmlFor="fileInput" className="upload-btn">
             Select Files (Demo Upload)
-          </button>
+          </label>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
+            <button onClick={handleUpload} className="upload-btn" style={{ backgroundColor: '#4ade80', color: '#000' }}>
+              🚀 Start Sharded Upload ({file.name})
+            </button>
+            <button onClick={() => { setFile(null); setUploadStatus('') }} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer' }}>
+              Cancel
+            </button>
+          </div>
+        )}
 
-          {uploadStatus && (
-            <div style={{ marginTop: '1rem', padding: '1rem', background: '#0f172a', borderRadius: '8px', textAlign: 'left' }}>
-              <p style={{ color: '#38bdf8' }}>Status: {uploadStatus}</p>
-              {token && <p style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>Token: {token}</p>}
-            </div>
-          )}
-        </div>
+        {uploadStatus && (
+          <div className={`status-message ${uploadStatus.includes('Error') ? 'error' : 'success'}`}>
+            Status: {uploadStatus}
+          </div>
+        )}
       </div>
     </div>
   )
+}
+
+async function fetchToken(file: File) {
+  const res = await fetch('http://localhost:8080/api/upload/init', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: file.name, size: file.size })
+  })
+  return await res.json()
 }
 
 export default App

@@ -50,7 +50,9 @@ app.post('/api/upload/init', async (req, res) => {
             dateShards: [
                 `quic://node-alpha.timber.network:4433/upload/${id}`,
                 `quic://node-beta.timber.network:4433/upload/${id}`,
-                `quic://node-gamma.timber.network:4433/upload/${id}`
+                `quic://node-alpha.timber.network:4455/upload/${id}`,
+                `quic://node-beta.timber.network:4455/upload/${id}`,
+                `quic://node-gamma.timber.network:4455/upload/${id}`
             ],
             parityShards: [
                 `https://core.timber.network/upload/${id}/parity`

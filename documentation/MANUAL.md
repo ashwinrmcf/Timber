@@ -68,8 +68,9 @@ npm run dev
 **3. Run Storage Node (Go)**
 ```bash
 cd backend/core
-go run main.go
+.\start_storage.bat
 ```
+*   **Note**: This script uses the custom Go path on your machine.
 *   It listens on `:8081` (HTTP) and `:4433` (QUIC).
 
 ## 5. Typical Workflow

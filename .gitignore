@@ -37,6 +37,7 @@ yarn-error.log*
 # Go
 backend/core/core.exe
 backend/core/vendor/
+backend/core/data/
 *.exe
 *.dll
 *.so
