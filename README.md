@@ -139,21 +139,49 @@ graph LR
 ## 🚀 Quick Start (Local Development)
 
 ### 1. Prerequisites
-- Node.js 18+
-- Go 1.25+
-- Docker & Docker Compose
+- **Node.js 18+** (Frontend & Gateway)
+- **Go 1.25+** (Storage Engine)
+- **Git** (Version Control)
 
 ### 2. Installation
-```bash
-# Install dependencies for Frontend & Gateway
-npm install
 
-# Install dependencies for Core (Go)
-cd backend/core && go mod tidy
+#### A. Frontend & Gateway (Node.js)
+```bash
+# at project root
+npm install
+```
+
+#### B. Storage Engine (Go)
+```bash
+cd backend/core
+go mod tidy
+cd ../..
 ```
 
 ### 3. Running the Stack
+
+You need **two** terminal windows to run the full stack.
+
+#### Terminal 1: Frontend & Gateway (Monorepo)
+This starts the React Frontend (Port 5173) and the API Gateway (Port 8080).
 ```bash
-# Start the Monorepo (Frontend + Gateway)
 turbo run dev
 ```
+
+#### Terminal 2: Storage Node (Go Engine)
+This starts the localized distributed storage node (Port 8081).
+*Windows:*
+```bash
+cd backend/core
+./start_storage.bat
+```
+*Linux/Mac:*
+```bash
+cd backend/core
+go run cmd/storage/main.go
+```
+
+**Access the App:**
+- **Frontend Dashboard:** [http://localhost:5173](http://localhost:5173)
+- **API Gateway Health:** [http://localhost:8080/health](http://localhost:8080/health)
+- **Storage Node Status:** [http://localhost:8081/status](http://localhost:8081/status)
