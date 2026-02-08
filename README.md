@@ -130,6 +130,7 @@ graph LR
 
 ## 📚 Documentation
 - **[📖 Enterprise Architecture v2.0](./documentation/Timber_Enterprise_Architecture.md)** - *Read this first!*
+- **[📊 System Architecture Diagram (Visual)](https://drive.google.com/file/d/1iCqBzz18fge_NBDQZxmxlFfiKWGJaEWB/view?usp=sharing)**
 - [📦 Project Dependencies](./DEPENDENCIES.md)
 - [🔧 API Reference (Protobufs)](./proto/README.md)
 - [🔒 Security Pattern: Bifurcation](./docs/security.md)
