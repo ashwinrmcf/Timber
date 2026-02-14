@@ -128,7 +128,7 @@ func main() {
 
 	// Start QUIC Transport in a goroutine
 	go func() {
-		if err := transport.StartQUICServer(":4433"); err != nil {
+		if err := transport.StartQUICServer(":4433", store, metaStore); err != nil {
 			log.Fatalf("QUIC Server failed: %v", err)
 		}
 	}()

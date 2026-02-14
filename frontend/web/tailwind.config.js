@@ -9,22 +9,22 @@ export default {
             colors: {
                 // Strict Palette: "Black, White, Silver"
                 silver: {
-                    DEFAULT: '#C0C0C0',
-                    50: '#F5F5F5',
-                    100: '#E5E5E5',
-                    200: '#D4D4D4',
-                    300: '#A3A3A3',
-                    400: '#737373',
-                    500: '#525252',
-                    600: '#404040',
-                    700: '#262626',
-                    800: '#171717',
-                    900: '#0A0A0A',
+                    DEFAULT: 'var(--silver-300)',
+                    50: 'var(--silver-50)',
+                    100: 'var(--silver-100)',
+                    200: 'var(--silver-200)',
+                    300: 'var(--silver-300)',
+                    400: 'var(--silver-400)',
+                    500: 'var(--silver-500)',
+                    600: 'var(--silver-600)',
+                    700: 'var(--silver-700)',
+                    800: 'var(--silver-800)',
+                    900: 'var(--silver-900)',
                 },
-                // Background Layers - Softened Dark Mode (Light Black / Dark Grey)
-                canvas: '#0F0F0F', // Rich dark grey, not pure black
-                panel: '#1A1A1A',  // Lighter grey for cards
-                surface: '#262626', // Interactive surface
+                // Background Layers - Mapped to CSS variables
+                canvas: 'var(--canvas)', 
+                panel: 'var(--panel)',  
+                surface: 'var(--surface)', 
                 white: '#FFFFFF',
             },
             fontFamily: {

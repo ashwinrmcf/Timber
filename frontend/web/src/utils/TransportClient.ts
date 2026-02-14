@@ -34,9 +34,16 @@ export class TransportClient {
     this.readLoop(stream.readable.getReader());
   }
 
-  async uploadShard(data: Uint8Array) {
-    await this.writer.write(data);
-    console.log(`Sent ${data.length} bytes`);
+  async uploadShard(data: Uint8Array, metadata: any) {
+    const metaStr = JSON.stringify(metadata) + "\n";
+    const metaData = new TextEncoder().encode(metaStr);
+
+    const combined = new Uint8Array(metaData.length + data.length);
+    combined.set(metaData);
+    combined.set(data, metaData.length);
+
+    await this.writer.write(combined);
+    console.log(`Sent ${combined.length} bytes (Meta + Shard)`);
   }
 
   private async readLoop(reader: any) {

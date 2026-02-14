@@ -1,0 +1,3 @@
+🌲 Timber Storage Node Starting...
+2026/02/09 16:29:18 Storage Node listening on :8081 (HTTP) and :4433 (QUIC)
+2026/02/09 16:29:18 listen tcp :8081: bind: address already in use
